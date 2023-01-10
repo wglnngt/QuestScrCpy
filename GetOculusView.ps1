@@ -29,7 +29,7 @@ if ([int]$nSType -eq 1) {
 	Write-Host "`tStep 4.1 Enable Wifi mode."
 	adb tcpip 5555
 	Write-Host "`tStep 4.2 Disconnect exist connection for WIFI connection."
-	adb disconnect
+	#adb disconnect
 	Write-Host "`tStep 4.3 Input the headset's ip address."
 	$strSvrIP = Read-Host "Please input the HMD's ip address here"
 	$strConnectDevice = "${strSvrIP}:5555"

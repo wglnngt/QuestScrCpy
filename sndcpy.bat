@@ -17,16 +17,28 @@ if not "%1"=="" (
     %ADB% %serial% uninstall com.rom1v.sndcpy || goto :error
     %ADB% %serial% install -t -g %SNDCPY_APK% || goto :error
 )
+
+%ADB% %serial% forward --remove-all
 %ADB% %serial% shell appops set com.rom1v.sndcpy PROJECT_MEDIA allow
 %ADB% %serial% forward tcp:%SNDCPY_PORT% localabstract:sndcpy || goto :error
 %ADB% %serial% shell am start com.rom1v.sndcpy/.MainActivity || goto :error
 
-timeout 2
+for /f "delims=" %%i in ('adb shell "ps -A | grep sndcpy"') do set "PROC=%%i"
+echo,"%PROC%"
+if "%PROC%" EQU "" (
+	echo,Process not running...
+) else (
+	echo,Process already running...
+)
+
+timeout 5
 
 echo Playing audio...
 REM %VLC%
-REM %VLC% -Idummy --demux rawaud --network-caching=0 --play-and-exit tcp://localhost:%SNDCPY_PORT%
-ffplay -hide_banner -probesize 32 -f s16le -ar 48k -ac 2 -sync ext -showmode 1 -i tcp://localhost:%SNDCPY_PORT%
+REM %VLC% -I dummy --demux rawaud --network-caching=0 --play-and-exit tcp://localhost:%SNDCPY_PORT%
+REM ffplay -hide_banner -probesize 32 -f s16le -ar 48k -ac 2 -sync ext -showmode 1 -i tcp://localhost:%SNDCPY_PORT%
+REM ffplay -hide_banner -fflags nobuffer -f s16le -ar 48k -ac 2 -sync ext -showmode 1 -i tcp://localhost:%SNDCPY_PORT%
+ffplay -hide_banner -fflags nobuffer -f s16le -ar 48k -ac 2 -sync ext -nodisp -i tcp://localhost:%SNDCPY_PORT%
 goto :EOF
 
 :error
