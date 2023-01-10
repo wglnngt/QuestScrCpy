@@ -27,6 +27,8 @@ for /f "delims=" %%i in ('adb shell "ps -A | grep sndcpy"') do set "PROC=%%i"
 echo,"%PROC%"
 if "%PROC%" EQU "" (
 	echo,Process not running...
+	call %~s0
+	Exit /b 0
 ) else (
 	echo,Process already running...
 )
