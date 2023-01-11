@@ -9,27 +9,35 @@ function pause() {
 }
 
 function StartAudioStream() {
-	$strInstRet = adb install -t -r -g sndcpy.apk
-	if ($strInstRet.IndexOf("Success") -eq -1) {
-		Write-Host "Uninstalling existing version first..."
-		adb uninstall com.rom1v.sndcpy
-		adb install -t -g sndcpy.apk
+	$strInstAPP = adb shell "pm list packages -3 | grep com.rom1v.sndcpy"
+	if ("$strInstAPP" -eq "") {
+		Write-Host "sndcpy app was not installed, will installing now.`n"
+
+		$strInstRet = adb install -t -r -g sndcpy.apk
+		if ($strInstRet.IndexOf("Success") -eq -1) {
+			Write-Host "Uninstalling existing version first..."
+			adb uninstall com.rom1v.sndcpy
+			adb install -t -g sndcpy.apk
+		}
+	} else {
+		Write-Host "Detected sndcpy app be installed, now check status:`n"
 	}
 
-	adb forward --remove-all
+	$strProcRet = adb shell "ps -A|grep sndcpy"
+	if ("$strProcRet" -eq "") {
+		Write-Host "Audio listener is not running...`n"
+	} else {
+		Write-Host "Audio listener already running..."
+		Write-Host "Now force stop it, and restart sndcpy again...`n"
+		adb shell am force-stop com.rom1v.sndcpy
+	}
+
 	adb shell appops set com.rom1v.sndcpy PROJECT_MEDIA allow
+	adb forward --remove-all
 	adb forward tcp:28200 localabstract:sndcpy
 	adb shell am start com.rom1v.sndcpy/.MainActivity
 
-	$strProcRet = adb shell "ps -A|grep sndcpy"
-	if ($strProcRet -eq "") {
-		Write-Host "APP start faild, will retry..."
-		StartAudioStream
-		return
-	} else {
-		Write-Host "Audio listener already running..."
-	}
-	ffplay -hide_banner -fflags nobuffer -f s16le -ar 48k -ac 2 -sync ext -nodisp -autoexit -i tcp://localhost:28200
+	#ffplay -hide_banner -fflags nobuffer -f s16le -ar 48k -ac 2 -sync ext -nodisp -autoexit -i tcp://localhost:28200
 }
 
 # Enable wifi mode via SideQuest.
@@ -98,7 +106,7 @@ if ([int]$nSType -eq 0) {
 Start -NoNewWindow cmd -args "/c start /b $env:temp\scrcpy.lnk"
 
 #Start -NoNewWindow sndcpy.bat
-StartAudioStream
+#StartAudioStream
 
 # Size for customize device
 #Start -NoNewWindow scrcpy -args "--window-title DeviceViewer -s ${strConnectDevice}"
