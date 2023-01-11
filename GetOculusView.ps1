@@ -8,6 +8,30 @@ function pause() {
 	[Console]::ReadKey() | Out-Null
 }
 
+function StartAudioStream() {
+	$strInstRet = adb install -t -r -g sndcpy.apk
+	if ($strInstRet.IndexOf("Success") -eq -1) {
+		Write-Host "Uninstalling existing version first..."
+		adb uninstall com.rom1v.sndcpy
+		adb install -t -g sndcpy.apk
+	}
+
+	adb forward --remove-all
+	adb shell appops set com.rom1v.sndcpy PROJECT_MEDIA allow
+	adb forward tcp:28200 localabstract:sndcpy
+	adb shell am start com.rom1v.sndcpy/.MainActivity
+
+	$strProcRet = adb shell "ps -A|grep sndcpy"
+	if ($strProcRet -eq "") {
+		Write-Host "APP start faild, will retry..."
+		StartAudioStream
+		return
+	} else {
+		Write-Host "Audio listener already running..."
+	}
+	ffplay -hide_banner -fflags nobuffer -f s16le -ar 48k -ac 2 -sync ext -nodisp -autoexit -i tcp://localhost:28200
+}
+
 # Enable wifi mode via SideQuest.
 # And the flow after this will be worked.
 
@@ -53,16 +77,29 @@ Write-Host "`tAuto push file to device and run the server, so run the scrcpy cli
 Write-Host "`n`n"
 Write-Host "Step 7. Specify the stream device,`n`t0 for Oculus Quest2 and `n`t1 for PICO Neo X :"
 $nSType = Read-Host "Your choice for device [0:Quest|1:PICO]"
+
+$oShell = New-Object -com WScript.Shell
+$oLink = $oShell.CreateShortcut("$env:temp\scrcpy.lnk")
+$oLink.TargetPath = "$PWD\scrcpy.exe"
 if ([int]$nSType -eq 0) {
 	# Size for Oculus Quest 2 : 3664x1920
 	#Start -NoNewWindow scrcpy -args "--crop 1600:900:2017:510 -b 80M --max-fps 0 --max-size 0 -n --window-title QuestViewer -s ${strConnectDevice}"
-	Start -NoNewWindow scrcpy -args "--crop 1600:900:2017:510 -n --window-title QuestViewer -s ${strConnectDevice}"
+	$oLink.IconLocation = "$PWD\quest.ico"
+	$oLink.WorkingDirectory = "$PWD"
+	$oLink.Arguments = "--crop 1600:900:2017:510 -n --window-title QuestViewer -s ${strConnectDevice}"
+	$oLink.Save()
 } else {
 	# The region of pico view is : 4320x2160
-	Start -NoNewWindow scrcpy -args "--crop 1680:944:230:608 -n --window-title PicoViewer -s ${strConnectDevice}"
+	$oLink.IconLocation = "$PWD\neo.ico"
+	$oLink.WorkingDirectory = "$PWD"
+	$oLink.Arguments = "--crop 1680:944:230:608 -n --window-title PicoViewer -s ${strConnectDevice}"
+	$oLink.Save()
 }
-Start -NoNewWindow sndcpy.bat
+Start -NoNewWindow cmd -args "/c start /b $env:temp\scrcpy.lnk"
+
+#Start -NoNewWindow sndcpy.bat
+StartAudioStream
 
 # Size for customize device
 #Start -NoNewWindow scrcpy -args "--window-title DeviceViewer -s ${strConnectDevice}"
-pause
+#pause
