@@ -1,3 +1,6 @@
+[2023/05/15]
+1. Add Pico NEO 3Pro monitor.
+
 [2022/10/12]
 1. Upgrade to v1.24.
 
