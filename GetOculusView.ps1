@@ -89,30 +89,40 @@ $nSType = Read-Host "Your choice for device [0:Quest|1:PICO4|2:PICO3|3:Quest3]"
 $oShell = New-Object -com WScript.Shell
 $oLink = $oShell.CreateShortcut("$env:temp\scrcpy.lnk")
 $oLink.TargetPath = "$PWD\scrcpy.exe"
+
+$strAudioOn = " --require-audio"
 if ([int]$nSType -eq 0) {
 	# Size for Oculus Quest 2 : 3664x1920
 	#Start -NoNewWindow scrcpy -args "--crop 1600:900:2017:510 -b 80M --max-fps 0 --max-size 0 -n --window-title QuestViewer -s ${strConnectDevice}"
-	$oLink.IconLocation = "$PWD\quest.ico"
+	${Env:SCRCPY_ICON_PATH} = "$PWD\icon\quest.png"
+	$oLink.IconLocation = "$PWD\icon\quest.ico"
 	$oLink.WorkingDirectory = "$PWD"
 	$oLink.Arguments = "--crop 1600:900:2017:510 -n --window-title QuestViewer -s ${strConnectDevice}"
 	$oLink.Save()
 } elseif ([int]$nSType -eq 1) {
 	# The region of pico4 view is : 4320x2160
-	$oLink.IconLocation = "$PWD\neo.ico"
+	${Env:SCRCPY_ICON_PATH} = "$PWD\icon\pico.png"
+	$strConnectDevice += $strAudioOn
+
+	$oLink.IconLocation = "$PWD\icon\pico.ico"
 	$oLink.WorkingDirectory = "$PWD"
 	$oLink.Arguments = "--crop 1680:944:230:608 -n --window-title PicoViewer -s ${strConnectDevice}"
 	$oLink.Save()
 } elseif ([int]$nSType -eq 2)  {
 	# The region of pico3 view is : 3664x1920
-	$oLink.IconLocation = "$PWD\neo.ico"
+	${Env:SCRCPY_ICON_PATH} = "$PWD\icon\pico.png"
+	$oLink.IconLocation = "$PWD\icon\pico.ico"
 	$oLink.WorkingDirectory = "$PWD"
 	$oLink.Arguments = "--crop 1016:1416:520:210 -n --window-title PicoViewer -s ${strConnectDevice}"
 	$oLink.Save()
 } elseif ([int]$nSType -eq 3)  {
 	# The region of Quest3 view is : 4128x2208
-	$oLink.IconLocation = "$PWD\quest.ico"
+	${Env:SCRCPY_ICON_PATH} = "$PWD\icon\quest.png"
+	$strConnectDevice += $strAudioOn
+
+	$oLink.IconLocation = "$PWD\icon\quest.ico"
 	$oLink.WorkingDirectory = "$PWD"
-	$oLink.Arguments = "--crop 1826:1026:137:603 -n --window-title PicoViewer -s ${strConnectDevice}"
+	$oLink.Arguments = "--crop 1826:1026:137:603 -n --window-title QuestViewer -s ${strConnectDevice}"
 	$oLink.Save()
 }
 Start -NoNewWindow cmd -args "/c start /b $env:temp\scrcpy.lnk"
