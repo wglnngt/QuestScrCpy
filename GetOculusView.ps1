@@ -102,7 +102,7 @@ if ([int]$nSType -eq 0) {
 } elseif ([int]$nSType -eq 1) {
 	# The region of pico4 view is : 4320x2160
 	${Env:SCRCPY_ICON_PATH} = "$PWD\icon\pico.png"
-	$strConnectDevice += $strAudioOn
+	#$strConnectDevice += $strAudioOn
 
 	$oLink.IconLocation = "$PWD\icon\pico.ico"
 	$oLink.WorkingDirectory = "$PWD"
@@ -118,7 +118,7 @@ if ([int]$nSType -eq 0) {
 } elseif ([int]$nSType -eq 3)  {
 	# The region of Quest3 view is : 4128x2208
 	${Env:SCRCPY_ICON_PATH} = "$PWD\icon\quest.png"
-	$strConnectDevice += $strAudioOn
+	#$strConnectDevice += $strAudioOn
 
 	$oLink.IconLocation = "$PWD\icon\quest.ico"
 	$oLink.WorkingDirectory = "$PWD"
