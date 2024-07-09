@@ -90,7 +90,7 @@ $oShell = New-Object -com WScript.Shell
 $oLink = $oShell.CreateShortcut("$env:temp\scrcpy.lnk")
 $oLink.TargetPath = "$PWD\scrcpy.exe"
 
-$strAudioOn = " --require-audio"
+#$strAudioOn = " --require-audio"
 if ([int]$nSType -eq 0) {
 	# Size for Oculus Quest 2 : 3664x1920
 	#Start -NoNewWindow scrcpy -args "--crop 1600:900:2017:510 -b 80M --max-fps 0 --max-size 0 -n --window-title QuestViewer -s ${strConnectDevice}"
