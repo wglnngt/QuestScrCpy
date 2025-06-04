@@ -137,7 +137,10 @@ if ([int]$nSType -eq 0) {
 
 	$oLink.IconLocation = "$PWD\icon\quest.ico"
 	$oLink.WorkingDirectory = "$PWD"
-	$oLink.Arguments = "--scale=240 --rotation-offset=22 --position-x-offset=-240 --position-y-offset=-190 --video-bit-rate=16M -n --window-title QuestViewer -s ${strConnectDevice}"
+	# back for v2.2_fix_version
+	#$oLink.Arguments = "--scale=240 --rotation-offset=22 --position-x-offset=-240 --position-y-offset=-190 --video-bit-rate=16M -n --window-title QuestViewer -s ${strConnectDevice}"
+	# the commandline below worked for v3.2 on official repo
+	$oLink.Arguments = "--crop=1680:945:220:450 --angle=22 --video-bit-rate=16M -n --window-title QuestViewer -s ${strConnectDevice}"
 	$oLink.Save()
 }
 Start -NoNewWindow cmd -args "/c start /b $env:temp\scrcpy.lnk"
