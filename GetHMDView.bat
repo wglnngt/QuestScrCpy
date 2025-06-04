@@ -137,7 +137,7 @@ if ([int]$nSType -eq 0) {
 
 	$oLink.IconLocation = "$PWD\icon\quest.ico"
 	$oLink.WorkingDirectory = "$PWD"
-	$oLink.Arguments = "--crop 1826:1026:137:603 -n --window-title QuestViewer -s ${strConnectDevice}"
+	$oLink.Arguments = "--scale=240 --rotation-offset=22 --position-x-offset=-240 --position-y-offset=-190 --video-bit-rate=16M -n --window-title QuestViewer -s ${strConnectDevice}"
 	$oLink.Save()
 }
 Start -NoNewWindow cmd -args "/c start /b $env:temp\scrcpy.lnk"
