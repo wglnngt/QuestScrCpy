@@ -63,10 +63,8 @@ Screen and Sound stream for VR HMDs(base on scrcpy ~~and sndcpy~~).
 
 ### **Operation Demonstration**
 - Please refer to the video demonstration below to see how to use the script.
-
-<iframe width="960" height="540" src="https://www.youtube.com/embed/LVmcopq82HA" title="QuestScrcpy: how to use it" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    [Youtube video](https://www.youtube.com/embed/LVmcopq82HA)
 
 
 - Or watch the video on bilibili
-    
-<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=115360187549137&bvid=BV16J4uzyEsp&cid=33013960232&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="960" height="540"></iframe>
+    [Bilibili video](https://player.bilibili.com/player.html?isOutside=true&aid=115360187549137&bvid=BV16J4uzyEsp&cid=33013960232&p=1)
