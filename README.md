@@ -13,8 +13,8 @@ Screen and Sound stream for VR HMDs(base on scrcpy ~~and sndcpy~~).
 
 3. **Check the Connection**
    - Observe the prompt messages in the command - line window to ensure that the first three checks have passed.
-    > Step 1. Connect the headset via usb cable.
-    > Step 2. Enable computer to access files on headset.
+    > Step 1. Connect the headset via usb cable.  
+    > Step 2. Enable computer to access files on headset.  
     > Step 3. Enable debug mode with usb cable, if dialog showed.
 
    - If the USB connection status, VR headset developer mode, and computer access permissions detection passed, press Enter to proceed to the next step.
@@ -22,20 +22,20 @@ Screen and Sound stream for VR HMDs(base on scrcpy ~~and sndcpy~~).
 4. **Select Connection Parameters**
    - In `Step 4`, select the connection mode according to the prompts.
 
-   > 0: USB Connection
+   > 0: USB Connection  
    > 1: WIFI Connection
 
    - When selecting the USB connection, make sure that the device name detected by the computer is the name of the headset. You should see information similar to the following:
 
-   > Step 4.1 Get connected device name.
+   > Step 4.1 Get connected device name.  
    >    Your connecting device is : XXXXXXXXXX
 
    - When selecting the WIFI connection, ensure that the headset and the computer are on the same network. You should see information similar to the following:
 
-   >    Step 4.1 Enable Wifi mode.
+   >    Step 4.1 Enable Wifi mode.  
    > restarting in TCP mode port: 5555  
-   >    Step 4.2 Disconnect exist connection for WIFI connection.
-   >    Step 4.3 Input the headset's ip address.
+   >    Step 4.2 Disconnect exist connection for WIFI connection.  
+   >    Step 4.3 Input the headset's ip address.  
    > Please input the HMD's ip address here:
 
     Enter the IP address of the headset according to the prompt.
@@ -48,9 +48,9 @@ Screen and Sound stream for VR HMDs(base on scrcpy ~~and sndcpy~~).
     - At this point, the program will automatically configure the connection environment between the headset and the computer.
 
     - In the last step, select the type of headset you are connecting to. Currently, the best viewing modes for devices such as Quest2, Quest3, PICO NEO3, and PICO 4 are supported. You will see information similar to the following:
-    > Step 7. Specify the stream device,
-    >    0 for Oculus Quest2 and
-    >    1 for PICO Neo X :
+    > Step 7. Specify the stream device,  
+    >    0 for Oculus Quest2 and  
+    >    1 for PICO Neo X :  
     > Your choice for device [0:Quest|1:PICO4|2:PICO3|3:Quest3]:
 
 
@@ -62,9 +62,9 @@ Screen and Sound stream for VR HMDs(base on scrcpy ~~and sndcpy~~).
    - Disconnect the USB connection between the VR HMD and the computer.
 
 ### **Operation Demonstration**
-- Please refer to the video demonstration below to see how to use the script.
+- Please refer to the video demonstration below to see how to use the script.  
     [Youtube video](https://www.youtube.com/embed/LVmcopq82HA)
 
 
-- Or watch the video on bilibili
+- Or watch the video on bilibili  
     [Bilibili video](https://player.bilibili.com/player.html?isOutside=true&aid=115360187549137&bvid=BV16J4uzyEsp&cid=33013960232&p=1)
