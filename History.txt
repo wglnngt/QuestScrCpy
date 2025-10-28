@@ -1,8 +1,48 @@
+[2025/10/28]
+1. Update scrcpy to version 3.3.3.
+
+[2025/10/13]
+1. 更新README文档并添加操作演示视频。
+
+[2025/06/12]
+1. Upgrade scrcpy to version 3.3.
+
+[2025/06/04]
+1. scrcpy更新至主仓库v3.2版本。
+2. 使用--crop和--angle参数对Quest3头显输出画面进行校正输出。
+
+[2025/06/04]
+1. 更新scrcpy至特殊版本，针对android14后系统无法裁切问题
+2. 增加--rotation-offset参数
+3. 增加--scale参数
+4. 增加--position-x-offset和--position-y-offset参数
+
+[2025/04/03]
+1. Add GetHMDView.bat
+
+[2024/07/09]
+1. Update scrcpy to v2.5.
+
+[2023/12/12]
+1. Add update rule.
+2. Update GetOculusView.ps1.
+
+[2023/11/29]
+1. 重组文件分级。
+
 [2023/11/17]
-1. Add Quest 3 monitor.
+1. Add screen copy for Quest 3.
+3. Upgrade adb and scrcpy to v2.2.
+
+[2023/05/31]
+1. Upgrade scrcpy to version 2.0.
 
 [2023/05/15]
 1. Add Pico NEO 3Pro monitor.
+
+[2023/01/11]
+1. 更新sndcpy.bat: 启动监听应用失败时，重新运行脚本。
+2. 添加PICO和QUEST头显图标动态生成功能。
 
 [2022/10/12]
 1. Upgrade to v1.24.
