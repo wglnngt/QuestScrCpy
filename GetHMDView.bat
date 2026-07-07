@@ -18,6 +18,32 @@ $strCurDir = $WorkDir
 $ENV:PATH = "$strCurDir;${ENV:PATH}"
 pushd $strCurDir
 
+# Quick start: if ip.ini exists in the working dir, read the IP on its first
+# non-empty line and skip all interactive prompts -- connect over WIFI with
+# PICO 4 preset, for one-click launch.
+$bQuickStart = $false
+$strQuickIP = ""
+$strCollection = ""
+$strConfigFile = "$strCurDir\config.ini"
+if (Test-Path $strConfigFile) {
+    # Parse simple key=value lines (sections / comments are ignored).
+    $cfg = @{}
+    foreach ($ln in Get-Content $strConfigFile) {
+        $t = "$ln".Trim()
+        if ($t -eq "" -or $t.StartsWith("#") -or $t.StartsWith(";") -or $t.StartsWith("[")) { continue }
+        if ($t.Contains("=")) {
+            $p = $t.IndexOf("=")
+            $cfg[$t.Substring(0, $p).Trim()] = $t.Substring($p + 1).Trim()
+        }
+    }
+    $strQuickIP = $cfg["ip"]
+    $strCollection = $cfg["collection"]
+    if ("$strQuickIP" -ne "") {
+        $bQuickStart = $true
+        Write-Host "Quick start: config.ini loaded, IP = $strQuickIP, collection = $strCollection (WIFI + PICO 4).`n"
+    }
+}
+
 function pause() {
 	Write-Host "Press any key to contiue..."
 	[Console]::ReadKey() | Out-Null
@@ -58,17 +84,24 @@ function StartAudioStream() {
 # Enable wifi mode via SideQuest.
 # And the flow after this will be worked.
 
-Write-Host "Step 1. Connect the headset via usb cable."
-Write-Host "Step 2. Enable computer to access files on headset."
-Write-Host "Step 3. Enable debug mode whith usb cable, if dialog showed."
-Write-Host "`n`n"
+if (-not $bQuickStart) {
+	Write-Host "Step 1. Connect the headset via usb cable."
+	Write-Host "Step 2. Enable computer to access files on headset."
+	Write-Host "Step 3. Enable debug mode whith usb cable, if dialog showed."
+	Write-Host "`n`n"
 
-Write-Host "When every thing is done. Press any key to go on."
-pause
+	Write-Host "When every thing is done. Press any key to go on."
+	pause
+}
 
 Write-Host "`n`n"
-Write-Host "Step 4. Specify the stream type, 0 for USB and 1 for WIFI :"
-$nSType = Read-Host "Your choice for stream [0:USB|1:WIFI]"
+if ($bQuickStart) {
+	$nSType = 1
+	Write-Host "Step 4. (Quick start) Stream type = WIFI"
+} else {
+	Write-Host "Step 4. Specify the stream type, 0 for USB and 1 for WIFI :"
+	$nSType = Read-Host "Your choice for stream [0:USB|1:WIFI]"
+}
 $strConnectDevice = ""
 if ([int]$nSType -eq 1) {
 	#adb shell setprop service.adb.tcp.port 5555
@@ -78,7 +111,7 @@ if ([int]$nSType -eq 1) {
 	Write-Host "`tStep 4.2 Disconnect exist connection for WIFI connection."
 	#adb disconnect
 	Write-Host "`tStep 4.3 Input the headset's ip address."
-	$strSvrIP = Read-Host "Please input the HMD's ip address here"
+	if ($bQuickStart) { $strSvrIP = $strQuickIP } else { $strSvrIP = Read-Host "Please input the HMD's ip address here" }
 	$strConnectDevice = "${strSvrIP}:5555"
 	Write-Host "`tStep 4.4 Connect the headset."
 	adb connect ${strConnectDevice}
@@ -90,16 +123,23 @@ if ([int]$nSType -eq 1) {
 Write-Host "`tYour connecting device is : ${strConnectDevice}"
 
 Write-Host "`n`n"
-Write-Host "Step 5. Now, please enable the debug module on your headset, if dialog showed."
-pause
+if (-not $bQuickStart) {
+	Write-Host "Step 5. Now, please enable the debug module on your headset, if dialog showed."
+	pause
+}
 
 Write-Host "`n`n"
 Write-Host "Step 6. Start the scrcpy server and connect the stream via scrcpy application on computer."
 Write-Host "`tAuto push file to device and run the server, so run the scrcpy client only."
 
 Write-Host "`n`n"
-Write-Host "Step 7. Specify the stream device,`n`t0 for Oculus Quest2 and `n`t1 for PICO Neo X :"
-$nSType = Read-Host "Your choice for device [0:Quest|1:PICO4|2:PICO3|3:Quest3]"
+if ($bQuickStart) {
+	$nSType = 1
+	Write-Host "Step 7. (Quick start) Device = PICO 4"
+} else {
+	Write-Host "Step 7. Specify the stream device,`n`t0 for Oculus Quest2 and `n`t1 for PICO Neo X :"
+	$nSType = Read-Host "Your choice for device [0:Quest|1:PICO4|2:PICO3|3:Quest3]"
+}
 
 $oShell = New-Object -com WScript.Shell
 $oLink = $oShell.CreateShortcut("$env:temp\scrcpy.lnk")
@@ -144,6 +184,39 @@ if ([int]$nSType -eq 0) {
 	$oLink.Save()
 }
 Start -NoNewWindow cmd -args "/c start /b $env:temp\scrcpy.lnk"
+
+# After the PicoViewer window is up, (re)start OBS so it can capture the view.
+# Only for PICO devices, whose scrcpy window title is "PicoViewer".
+if (([int]$nSType -eq 1) -or ([int]$nSType -eq 2)) {
+
+	Write-Host "Waiting for PicoViewer window..."
+	$bWin = $false
+	for ($i = 0; $i -lt 20; $i++) {
+		if (Get-Process | Where-Object { $_.MainWindowTitle -like "*PicoViewer*" }) {
+			$bWin = $true
+			break
+		}
+		Start-Sleep -Milliseconds 500
+	}
+
+	if ($bWin) {
+		Write-Host "PicoViewer is up. Preparing OBS..."
+
+		# Close any running OBS instance first (detect via 'ps obs64').
+		if (ps obs64 -ErrorAction SilentlyContinue) {
+			Write-Host "Detected running OBS, closing it first..."
+			ps obs64 | Stop-Process -Force
+			Start-Sleep -Milliseconds 1000   # let OBS fully release its resources
+		}
+
+		$strOBSArgs = "--minimax-to-tray"
+		if ("$strCollection" -ne "") { $strOBSArgs += " --collection $strCollection" }
+		Start-Process OBS -Args $strOBSArgs
+		Write-Host "OBS launched."
+	} else {
+		Write-Host "PicoViewer window did not appear within ~10s, OBS launch skipped."
+	}
+}
 
 #Start -NoNewWindow sndcpy.bat
 #StartAudioStream
